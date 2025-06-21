@@ -1,7 +1,8 @@
 # 📻 SDR Experiment: FM Radio Receiver using RTL-SDR
 
-## 🖼️ Flow Diagram
-![Flow Diagram](first.png)
+## 🖼️ Flow Diagram & User Interface
+![GNU Radio Flow](first-flow.png)
+![Radio User Interface](first-ux.png)
 
 ## 🎛️ Variable Controls
 - **freq:** Frequency dial control (88-108 MHz range, default: 100.3 MHz) - Controls the center frequency for FM radio reception
