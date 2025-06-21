@@ -22,7 +22,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: Not titled yet
+    title: First radio
     window_size: (1000,1000)
   states:
     bus_sink: false
@@ -53,31 +53,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [64, 280.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_dialgauge_0
-  id: qtgui_dialgauge
-  parameters:
-    affinity: ''
-    alias: ''
-    backgroundColor: white
-    barColor: blue
-    comment: ''
-    fontColor: black
-    gui_hint: ''
-    label: ''
-    maximum: '100'
-    minimum: '0'
-    msize: '100'
-    position: '1'
-    showValue: 'False'
-    type: int
-    value: '0'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [432, 184.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -258,8 +233,6 @@ blocks:
 
 connections:
 - [analog_wfm_rcv_0, '0', audio_sink_0, '0']
-- [freq, value, qtgui_dialgauge_0, value]
-- [freq, value, soapy_rtlsdr_source_0, cmd]
 - [low_pass_filter_0, '0', analog_wfm_rcv_0, '0']
 - [soapy_rtlsdr_source_0, '0', low_pass_filter_0, '0']
 - [soapy_rtlsdr_source_0, '0', qtgui_freq_sink_x_0, '0']
