@@ -1,0 +1,469 @@
+options:
+  parameters:
+    author: Vadym Khondar
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: fm_band_sweeper
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: FM band sweeper
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: audio_resampling_fc
+  id: variable
+  parameters:
+    comment: ''
+    value: '5'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1344, 32.0]
+    rotation: 0
+    state: enabled
+- name: audio_samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '44100'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 8.0]
+    rotation: 0
+    state: enabled
+- name: freq
+  id: variable
+  parameters:
+    comment: ''
+    value: '100300000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [512, 8.0]
+    rotation: 0
+    state: enabled
+- name: rf_samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '1102500'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [200, 12]
+    rotation: 0
+    state: enabled
+- name: variable_qtgui_label_0
+  id: variable_qtgui_label
+  parameters:
+    comment: ''
+    formatter: None
+    gui_hint: 0,0
+    label: 'Scan frequency:'
+    type: int
+    value: freq
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [968, 160.0]
+    rotation: 0
+    state: enabled
+- name: analog_wfm_rcv_0
+  id: analog_wfm_rcv
+  parameters:
+    affinity: ''
+    alias: ''
+    audio_decimation: audio_resampling_fc
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    quad_rate: audio_samp_rate * audio_resampling_fc
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1152, 464.0]
+    rotation: 0
+    state: enabled
+- name: audio_sink_0
+  id: audio_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    device_name: ''
+    num_inputs: '1'
+    ok_to_block: 'True'
+    samp_rate: audio_samp_rate
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1368, 472.0]
+    rotation: 0
+    state: enabled
+- name: blocks_message_debug_0
+  id: blocks_message_debug
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    en_uvec: 'True'
+    log_level: info
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [688, 40.0]
+    rotation: 0
+    state: enabled
+- name: blocks_message_strobe_0
+  id: blocks_message_strobe
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    msg: pmt.intern("TICK")
+    period: '1000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [152, 184.0]
+    rotation: 0
+    state: enabled
+- name: blocks_msgpair_to_var_0
+  id: blocks_msgpair_to_var
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    target: freq
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [688, 192.0]
+    rotation: 0
+    state: enabled
+- name: blocks_var_to_msg_0
+  id: blocks_var_to_msg
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    msgname: freq
+    target: freq
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 464.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\nimport pmt\n\n\nclass wrap_in_dict_block(gr.basic_block):\n\
+      \    \"\"\"\n    Custom GNU Radio block that transforms an arbitrary input value\
+      \ \n    into a dictionary with a configurable key name.\n    \"\"\"\n    def\
+      \ __init__(self, key_name=\"value\"):\n        super().__init__(\n         \
+      \   name=\"Wrap variable in Dict\",\n            in_sig=None,  # No streaming\
+      \ input\n            out_sig=None) # No streaming output\n        \n       \
+      \ # Store the configurable key name\n        self.key_name = key_name\n    \
+      \    \n        # Register message ports\n        self.message_port_register_in(pmt.intern(\"\
+      in\"))\n        self.message_port_register_out(pmt.intern(\"out\"))\n      \
+      \  \n        # Set the message handler\n        self.set_msg_handler(pmt.intern(\"\
+      in\"), self.handle_msg)\n    \n    def handle_msg(self, msg):\n        \"\"\"\
+      \n        Handle incoming messages and transform them into dictionaries\n  \
+      \      \"\"\"\n        try:\n            # Check if input is a PMT pair (freq\
+      \ . 1.004e+08)\n            if pmt.is_pair(msg):\n                # Extract\
+      \ the value (cdr) from the pair\n                input_value = pmt.to_python(pmt.cdr(msg))\n\
+      \            else:\n                # Convert the input message to a Python\
+      \ object\n                input_value = pmt.to_python(msg)\n            \n \
+      \           # Create dictionary with configurable key and input value\n    \
+      \        output_dict = {self.key_name: input_value}\n            \n        \
+      \    # Convert dictionary back to PMT and send\n            output_msg = pmt.to_pmt(output_dict)\n\
+      \            self.message_port_pub(pmt.intern(\"out\"), output_msg)\n      \
+      \      \n        except Exception as e:\n            print(f\"Error in value_to_dict_block:\
+      \ {e}\")\n    \n    def set_key_name(self, key_name):\n        \"\"\"\n    \
+      \    Setter for the key name parameter\n        \"\"\"\n        self.key_name\
+      \ = key_name\n    \n    def get_key_name(self):\n        \"\"\"\n        Getter\
+      \ for the key name parameter\n        \"\"\"\n        return self.key_name\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    key_name: '"freq"'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Wrap variable in Dict', 'wrap_in_dict_block', [('key_name', "'value'")],
+      [('in', 'message', 1)], [('out', 'message', 1)], '\nCustom GNU Radio block that
+      transforms an arbitrary input value \ninto a dictionary with a configurable
+      key name.\n', ['key_name'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [272, 472.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_1
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\nimport pmt\n\nclass range_sweeper_block(gr.basic_block):\n\
+      \    \"\"\"\n    Custom GNU Radio block that sweeps across a given range with\
+      \ each clock,\n    emitting values as messages. Optionally loops when boundary\
+      \ is reached.\n    \"\"\"\n    def __init__(self, start_val=0.0, stop_val=100.0,\
+      \ step_val=1.0, should_loop=False, key_name=\"value\"):\n        super().__init__(\n\
+      \            name=\"Range Sweeper\",\n            in_sig=None,  # No streaming\
+      \ input\n            out_sig=None) # No streaming output\n        \n       \
+      \ # Store sweep parameters\n        self.start_val = start_val\n        self.stop_val\
+      \ = stop_val\n        self.step_val = step_val\n        self.should_loop = should_loop\n\
+      \        self.key_name = key_name\n        \n        # Initialize current position\n\
+      \        self.current_value = self.start_val\n        \n        # Register message\
+      \ ports\n        self.message_port_register_in(pmt.intern(\"clock\"))\n    \
+      \    self.message_port_register_out(pmt.intern(\"out\"))\n        \n       \
+      \ # Set the message handler\n        self.set_msg_handler(pmt.intern(\"clock\"\
+      ), self.handle_clock)\n    \n    def is_finished(self):\n        \"\"\"\n  \
+      \      Check if sweep is finished based on current value and bounds\n      \
+      \  \"\"\"\n        if self.step_val > 0:\n            return self.current_value\
+      \ > self.stop_val\n        else:\n            return self.current_value < self.stop_val\n\
+      \    \n    def handle_clock(self, msg):\n        \"\"\"\n        Handle incoming\
+      \ clock messages and emit next sweep value\n        \"\"\"\n        try:\n \
+      \           # If finished and not looping, do nothing\n            if self.is_finished()\
+      \ and not self.should_loop:\n                return\n            \n        \
+      \    # If finished and looping, reset to start\n            if self.is_finished()\
+      \ and self.should_loop:\n                self.current_value = self.start_val\n\
+      \            \n            # Emit current value as PMT pair (key . value)\n\
+      \            key_pmt = pmt.intern(self.key_name)\n            value_pmt = pmt.to_pmt(self.current_value)\n\
+      \            output_msg = pmt.cons(key_pmt, value_pmt)\n            self.message_port_pub(pmt.intern(\"\
+      out\"), output_msg)\n            \n            # Advance to next value\n   \
+      \         self.current_value += self.step_val\n                \n        except\
+      \ Exception as e:\n            print(f\"Error in range_sweeper_block: {e}\"\
+      )\n    \n    def reset_sweep(self):\n        \"\"\"\n        Reset the sweep\
+      \ to the beginning\n        \"\"\"\n        self.current_value = self.start_val\n\
+      \    \n    # Parameter getters and setters\n    def set_start_val(self, start_val):\n\
+      \        self.start_val = start_val\n        if self.current_value < start_val\
+      \ or self.current_value > self.stop_val:\n            self.reset_sweep()\n \
+      \   \n    def get_start_val(self):\n        return self.start_val\n    \n  \
+      \  def set_stop_val(self, stop_val):\n        self.stop_val = stop_val\n   \
+      \     if self.current_value > stop_val or self.current_value < self.start_val:\n\
+      \            self.reset_sweep()\n    \n    def get_stop_val(self):\n       \
+      \ return self.stop_val\n    \n    def set_step_val(self, step_val):\n      \
+      \  self.step_val = step_val\n        # Prevent zero step to avoid infinite loop\n\
+      \        if step_val == 0:\n            self.step_val = 1.0\n    \n    def get_step_val(self):\n\
+      \        return self.step_val\n    \n    def set_should_loop(self, should_loop):\n\
+      \        self.should_loop = should_loop\n    \n    def get_should_loop(self):\n\
+      \        return self.should_loop\n    \n    def set_key_name(self, key_name):\n\
+      \        self.key_name = key_name\n    \n    def get_key_name(self):\n     \
+      \   return self.key_name\n    \n    def get_current_value(self):\n        return\
+      \ self.current_value\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    key_name: '"value"'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    should_loop: 'True'
+    start_val: '85000000'
+    step_val: '2000000'
+    stop_val: '108000000'
+  states:
+    _io_cache: ('Range Sweeper', 'range_sweeper_block', [('start_val', '0.0'), ('stop_val',
+      '100.0'), ('step_val', '1.0'), ('should_loop', 'False'), ('key_name', "'value'")],
+      [('clock', 'message', 1)], [('out', 'message', 1)], '\nCustom GNU Radio block
+      that sweeps across a given range with each clock,\nemitting values as messages.
+      Optionally loops when boundary is reached.\n', ['key_name', 'should_loop', 'start_val',
+      'step_val', 'stop_val'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [400, 160.0]
+    rotation: 0
+    state: enabled
+- name: low_pass_filter_0
+  id: low_pass_filter
+  parameters:
+    affinity: ''
+    alias: ''
+    beta: '6.76'
+    comment: ''
+    cutoff_freq: '100000'
+    decim: '1'
+    gain: '1'
+    interp: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: rf_samp_rate
+    type: fir_filter_ccf
+    width: '50000'
+    win: window.WIN_HAMMING
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [760, 420.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_waterfall_sink_x_0
+  id: qtgui_waterfall_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    axislabels: 'True'
+    bw: rf_samp_rate
+    color1: '0'
+    color10: '0'
+    color2: '0'
+    color3: '0'
+    color4: '0'
+    color5: '0'
+    color6: '0'
+    color7: '0'
+    color8: '0'
+    color9: '0'
+    comment: ''
+    fc: freq
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'False'
+    gui_hint: 1,0
+    int_max: '10'
+    int_min: '-140'
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: FM Band scan
+    nconnections: '1'
+    showports: 'False'
+    type: complex
+    update_time: '0.10'
+    wintype: window.WIN_BLACKMAN_hARRIS
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [968, 272.0]
+    rotation: 0
+    state: enabled
+- name: rational_resampler_xxx_0
+  id: rational_resampler_xxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    decim: '10'
+    fbw: '0'
+    interp: '2'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    taps: '[]'
+    type: ccc
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [968, 448.0]
+    rotation: 0
+    state: enabled
+- name: soapy_rtlsdr_source_0
+  id: soapy_rtlsdr_source
+  parameters:
+    affinity: ''
+    agc: 'False'
+    alias: ''
+    bias: 'False'
+    bufflen: '16384'
+    center_freq: '100300000'
+    comment: ''
+    dev_args: ''
+    freq_correction: '0'
+    gain: '20'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: rf_samp_rate
+    type: fc32
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [520, 464.0]
+    rotation: 0
+    state: enabled
+
+connections:
+- [analog_wfm_rcv_0, '0', audio_sink_0, '0']
+- [blocks_message_strobe_0, strobe, epy_block_1, clock]
+- [blocks_var_to_msg_0, msgout, epy_block_0, in]
+- [epy_block_0, out, soapy_rtlsdr_source_0, cmd]
+- [epy_block_1, out, blocks_message_debug_0, log]
+- [epy_block_1, out, blocks_msgpair_to_var_0, inpair]
+- [low_pass_filter_0, '0', qtgui_waterfall_sink_x_0, '0']
+- [low_pass_filter_0, '0', rational_resampler_xxx_0, '0']
+- [rational_resampler_xxx_0, '0', analog_wfm_rcv_0, '0']
+- [soapy_rtlsdr_source_0, '0', low_pass_filter_0, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.11.0
